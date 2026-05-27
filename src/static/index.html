@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -12,13 +12,19 @@
     />
   </head>
   <body>
-     <div class="announcement-banner">
-        📢 As inscrições para atividades estão abertas até o final do mês. Não perca sua vaga!
-    </div>
+    <section id="announcements-region" aria-live="polite" aria-label="Anúncios ativos">
+      <div id="announcements-list" class="announcements-list">
+        <p class="announcement-loading">Carregando anúncios...</p>
+      </div>
+    </section>
     <header>
       <h1>Mergington High School</h1>
       <h2>Atividades Extracurriculares</h2>
       <div id="user-controls">
+        <button id="manage-announcements-button" class="icon-button" aria-label="Gerenciar anúncios">
+          <span aria-hidden="true">📣</span>
+          <span>Gerenciar anúncios</span>
+        </button>
         <div id="user-status">
           <button id="login-button" class="icon-button">
             <span class="user-icon">👤</span>
@@ -41,7 +47,7 @@
             <!-- Search Box -->
             <div class="search-box">
               <input type="text" id="activity-search" placeholder="Buscar atividades..." />
-              <button id="search-button" aria-label="Search">
+              <button id="search-button" aria-label="Buscar atividades">
                 <span class="search-icon">🔍</span>
               </button>
             </div>
@@ -134,6 +140,46 @@
           <button type="submit">Entrar</button>
         </form>
         <div id="login-message" class="hidden message"></div>
+      </div>
+    </div>
+
+    <div id="announcements-modal" class="modal hidden" aria-hidden="true">
+      <div class="modal-content announcements-modal-content" role="dialog" aria-modal="true" aria-labelledby="announcements-modal-title">
+        <span class="close-announcements-modal" aria-label="Fechar gerenciamento de anúncios">&times;</span>
+        <h3 id="announcements-modal-title">Gerenciar anúncios</h3>
+        <p class="modal-subtitle">Crie comunicados com período de exibição. A data de expiração é obrigatória.</p>
+
+        <form id="announcement-form" class="announcement-form">
+          <input type="hidden" id="announcement-id" />
+          <div class="form-group">
+            <label for="announcement-title">Título</label>
+            <input type="text" id="announcement-title" maxlength="120" required placeholder="Ex: Prazo para inscrições" />
+          </div>
+          <div class="form-group">
+            <label for="announcement-message">Mensagem</label>
+            <textarea id="announcement-message" maxlength="1000" required placeholder="Descreva o anúncio para alunos e responsáveis"></textarea>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="announcement-starts-at">Início (opcional)</label>
+              <input type="datetime-local" id="announcement-starts-at" />
+            </div>
+            <div class="form-group">
+              <label for="announcement-expires-at">Expiração</label>
+              <input type="datetime-local" id="announcement-expires-at" required />
+            </div>
+          </div>
+          <div class="announcement-form-actions">
+            <button type="button" id="announcement-cancel-edit" class="secondary-button hidden">Cancelar edição</button>
+            <button type="submit" id="announcement-save-button">Salvar anúncio</button>
+          </div>
+        </form>
+
+        <div class="announcements-management-list-wrapper">
+          <h4>Anúncios cadastrados</h4>
+          <div id="announcements-management-list" class="announcements-management-list"></div>
+        </div>
+        <div id="announcements-message" class="hidden message"></div>
       </div>
     </div>
 
