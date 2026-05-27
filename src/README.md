@@ -5,7 +5,9 @@ Uma aplicação FastAPI super simples que permite aos alunos visualizar e se ins
 ## Funcionalidades
 
 - Visualizar todas as atividades extracurriculares disponíveis
-- Inscrever-se em atividades
+- Inscrever e remover estudantes de atividades (somente usuários autenticados)
+- Exibir anúncios ativos no topo da página
+- Gerenciar anúncios com criação, edição e exclusão (somente usuários autenticados)
 
 ## Como começar
 
@@ -27,14 +29,22 @@ Uma aplicação FastAPI super simples que permite aos alunos visualizar e se ins
 
 ## Endpoints da API
 
-| Método | Endpoint                                                          | Descrição                                                            |
-| ------ | ----------------------------------------------------------------- | -------------------------------------------------------------------- |
-| GET    | `/activities`                                                     | Obtém todas as atividades com detalhes e número atual de participantes |
-| POST   | `/activities/{activity_name}/signup?email=student@mergington.edu` | Inscreve-se em uma atividade                                         |
+| Método | Endpoint | Descrição |
+| ------ | -------- | --------- |
+| GET | `/activities` | Obtém todas as atividades com detalhes e número atual de participantes |
+| POST | `/activities/{activity_name}/signup?email=student@mergington.edu&teacher_username={username}` | Inscreve estudante na atividade (autenticação obrigatória) |
+| POST | `/activities/{activity_name}/unregister?email=student@mergington.edu&teacher_username={username}` | Remove estudante da atividade (autenticação obrigatória) |
+| POST | `/auth/login?username={username}&password={password}` | Realiza login de professor/direção |
+| GET | `/auth/check-session?username={username}` | Valida sessão salva no cliente |
+| GET | `/announcements` | Lista anúncios ativos (considera início opcional e expiração obrigatória) |
+| GET | `/announcements/manage?teacher_username={username}` | Lista todos os anúncios para gerenciamento (autenticação obrigatória) |
+| POST | `/announcements?teacher_username={username}` | Cria anúncio (expiração obrigatória, início opcional) |
+| PUT | `/announcements/{announcement_id}?teacher_username={username}` | Atualiza anúncio existente |
+| DELETE | `/announcements/{announcement_id}?teacher_username={username}` | Exclui anúncio |
 
 ## Modelo de Dados
 
-A aplicação usa um modelo de dados simples com identificadores significativos:
+A aplicação usa MongoDB com identificadores significativos:
 
 1. **Atividades** - Usa o nome da atividade como identificador:
    - Descrição
@@ -42,8 +52,16 @@ A aplicação usa um modelo de dados simples com identificadores significativos:
    - Número máximo de participantes permitidos
    - Lista de e-mails dos alunos inscritos
 
-2. **Alunos** - Usa o e-mail como identificador:
-   - Nome
-   - Série
+2. **Professores** - Usa o username como identificador:
+   - Nome de exibição
+   - Senha com hash Argon2
+   - Papel (teacher/admin)
 
-Todos os dados são armazenados em memória, o que significa que serão resetados quando o servidor for reiniciado.
+3. **Anúncios** - Usa slug do título como identificador:
+   - Título
+   - Mensagem
+   - Data de início (opcional)
+   - Data de expiração (obrigatória)
+   - Usuário criador
+
+Dados iniciais de atividades, professores e um anúncio de exemplo são inseridos automaticamente quando as coleções estão vazias.
